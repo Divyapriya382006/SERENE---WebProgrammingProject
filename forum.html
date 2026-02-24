@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community — Serene</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">Serene</a>
+  <div class="navbar-nav">
+    <a href="chat.html"      class="nav-link">Chat</a>
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="user-avatar" id="navAvatar"></div>
+  </div>
+</nav>
+
+<div class="forum-layout z1">
+  <div style="margin-bottom:32px">
+    <h1 style="font-family:var(--font-display);font-size:2rem;margin-bottom:8px">Community Forum</h1>
+    <p style="color:var(--text2)">A safe space to share, connect, and support one another</p>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div class="forum-filters" id="filterTabs">
+      <div class="filter-tab active" data-filter="All">All Posts</div>
+      <div class="filter-tab" data-filter="Anxiety">Anxiety</div>
+      <div class="filter-tab" data-filter="Depression">Depression</div>
+      <div class="filter-tab" data-filter="Self-care">Self-care</div>
+      <div class="filter-tab" data-filter="Wins 🎉">Wins 🎉</div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="newPostBtn">+ New Post</button>
+  </div>
+
+  <div id="forumPosts"></div>
+</div>
+
+<!-- New Post modal -->
+<div class="modal-overlay" id="newPostModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Share with the community</div>
+      <button class="modal-close" id="newPostModalClose">✕</button>
+    </div>
+    <form id="newPostForm">
+      <div class="form-group">
+        <label class="form-label">Post title</label>
+        <input type="text" class="form-input" id="postTitle" placeholder="What's on your mind?" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="postFlair">
+          <option>Anxiety</option>
+          <option>Depression</option>
+          <option>Self-care</option>
+          <option>General</option>
+          <option>Wins 🎉</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your message</label>
+        <textarea class="form-input" id="postBody" rows="5" placeholder="Share your thoughts..." required></textarea>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button type="submit" class="btn btn-primary" style="flex:1">Post Anonymously</button>
+        <button type="button" class="btn btn-ghost" id="cancelPostBtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Serene</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">Serene</a>
+  <div class="navbar-nav">
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <a href="login.html" class="btn-nav-cta">Sign In →</a>
+  </div>
+</nav>
+
+<div class="auth-page z1">
+  <div class="auth-container wide">
+
+    <div class="auth-header">
+      <div class="auth-logo">Serene</div>
+      <div class="auth-subtitle">Begin your wellness journey today</div>
+    </div>
+
+    <div class="auth-card">
+      <h2>Create your account</h2>
+      <p>Free forever for core features</p>
+
+    
+      <form id="signupForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-input" id="firstName" placeholder="Alex" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-input" id="lastName" placeholder="Rivera" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email address</label>
+          <input type="email" class="form-input" id="signupEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="password-wrap">
+            <input type="password" class="form-input" id="signupPassword" placeholder="Min. 8 characters" required minlength="8">
+            <button type="button" class="password-toggle" id="passwordToggle">👁</button>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-full" id="signupBtn">Create Account ✦</button>
+      </form>
+
+      <div class="auth-footer mt-4">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

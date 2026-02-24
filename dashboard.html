@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Serene</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">Serene</a>
+  <div class="navbar-nav">
+    <a href="chat.html"  class="nav-link">Chat</a>
+    <a href="forum.html" class="nav-link">Community</a>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="user-avatar" id="navAvatar"></div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+
+  <div class="dash-sidebar">
+    <div class="dash-nav-section">
+      <div class="dash-nav-label">Main</div>
+      <div class="dash-nav-item active"><span class="dash-nav-icon"></span>Overview</div>
+      <a href="chat.html"  class="dash-nav-item"><span class="dash-nav-icon"></span>Chat</a>
+      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Mood Log</div>
+      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Progress</div>
+    </div>
+    <div class="dash-nav-section">
+      <div class="dash-nav-label">Connect</div>
+      <a href="forum.html" class="dash-nav-item">
+        <span class="dash-nav-icon"></span>Community<span class="dash-badge">3</span>
+      </a>
+      <div class="dash-nav-item"><span class="dash-nav-icon"></span>My Therapist</div>
+      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Reports</div>
+    </div>
+    <div class="dash-nav-section">
+      <div class="dash-nav-label">Account</div>
+      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Settings</div>
+      <a href="index.html" class="dash-nav-item"><span class="dash-nav-icon"></span>Home</a>
+      <button class="dash-nav-item" id="logoutBtn" style="width:100%;text-align:left;background:none;border:none;color:var(--text2);font-size:0.88rem;font-weight:500;">
+        <span class="dash-nav-icon"></span>Sign Out
+      </button>
+    </div>
+  </div>
+
+  <div class="dash-content">
+    <div class="dash-header">
+      <div class="dash-greeting" id="dashGreeting">Good Day!</div>
+      <div class="dash-date"     id="dashDate"></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-label">Chat Sessions</div>
+        <div class="stat-card-change up">↑ 4 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Avg Mood Score</div>
+        <div class="stat-card-change up">↑ 0.8 vs last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-val">12</div>
+        <div class="stat-card-label">Day Streak</div>
+        <div class="stat-card-change up">Personal best!</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-val">3</div>
+        <div class="stat-card-label">Risk Alerts</div>
+        <div class="stat-card-change down">↑ 1 this month</div>
+      </div>
+    </div>
+
+    <div class="heatmap-section">
+      <div class="section-head">
+        <h3>Mood Heatmap · Feb 2026</h3>
+        <select style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:var(--radius-sm);font-size:0.82rem;">
+          <option>This Month</option><option>Last Month</option><option>3 Months</option>
+        </select>
+      </div>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+      <div class="heatmap-legend">
+        <span>Low</span>
+        <div class="legend-swatch" style="background:var(--danger);opacity:.6"></div>
+        <div class="legend-swatch" style="background:var(--accent2);opacity:.6"></div>
+        <div class="legend-swatch" style="background:var(--accent);opacity:.5"></div>
+        <div class="legend-swatch" style="background:var(--accent3);opacity:.6"></div>
+        <div class="legend-swatch" style="background:var(--accent3)"></div>
+        <span>High</span>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <h4>Mood Trend · Last 7 Days</h4>
+        <div class="chart-placeholder" id="moodChart"></div>
+      </div>
+      <div class="chart-card">
+        <h4>Session Frequency</h4>
+        <div class="chart-placeholder" id="sessionChart"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head" style="margin-bottom:0">
+        <h3>Recent Sessions</h3>
+        <a href="chat.html" class="btn btn-ghost btn-sm">New Chat +</a>
+      </div>
+      <div style="margin-top:16px">
+        <div class="session-item">
+          <div class="session-icon"></div>
+          <div class="session-info">
+            <div class="session-title">Understanding my anxiety</div>
+            <div class="session-meta">Today · 24 min · 18 messages</div>
+          </div>
+          
+        </div>
+        <div class="session-item">
+          <div class="session-icon"></div>
+          <div class="session-info">
+            <div class="session-title">Morning check-in</div>
+            <div class="session-meta">Yesterday · 8 min · 6 messages</div>
+          </div>
+        </div>
+        <div class="session-item">
+          <div class="session-icon"></div>
+          <div class="session-info">
+            <div class="session-title">Coping strategies</div>
+            <div class="session-meta">Mon · 35 min · 28 messages</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

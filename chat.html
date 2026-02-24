@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat — Serene</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="navbar-brand" href="index.html">Serene</a>
+  <div class="navbar-nav">
+    <a href="dashboard.html" class="nav-link">Dashboard</a>
+    <a href="forum.html"     class="nav-link">Community</a>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="user-avatar" id="navAvatar">?</div>
+  </div>
+</nav>
+
+<button class="crisis-fab" id="crisisFab">🆘 Need Help Now?</button>
+
+<div class="chat-layout">
+
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <h3>Conversations</h3>
+      <button class="sidebar-new-btn" id="newChatBtn" title="New chat">+</button>
+    </div>
+    <div class="sidebar-list" id="chatHistoryList">
+      <div class="chat-history-item active">
+        <div class="chi-title">New session</div>
+        <div class="chi-preview">Start talking to Serene...</div>
+        <div class="chi-time">Now</div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="user-avatar" id="sidebarAvatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarName">Loading...</div>
+          <div class="user-plan">✓ Free Plan</div>
+        </div>
+        <button id="logoutBtn" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem" title="Sign out">⬡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-main">
+    <div class="chat-topbar">
+      <div class="chat-topbar-info">
+        <div class="ai-avatar"><div class="ai-status"></div></div>
+        <div class="ai-info">
+          <div class="ai-name">Serene AI</div>
+          <div class="ai-desc">Mental health companion</div>
+        </div>
+      </div>
+      <div class="chat-topbar-actions">
+        <button class="icon-btn" id="ttsBtn"    title="Read aloud">🔊</button>
+        <button class="icon-btn" id="clearBtn"  title="Clear chat">🗑</button>
+        <button class="icon-btn" id="exportBtn" title="Export session">📥</button>
+      </div>
+    </div>
+
+    <div class="sentiment-bar">
+      <div class="sentiment-fill" id="sentimentFill" style="width:65%"></div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+      <div class="mood-check-in" id="moodCheckIn">
+        <p>How are you feeling right now?</p>
+        <div class="mood-options">
+          <button class="mood-btn" data-mood="😊 Great"      data-score="5">😊</button>
+          <button class="mood-btn" data-mood="😐 Okay"       data-score="3">😐</button>
+          <button class="mood-btn" data-mood="😔 Low"        data-score="2">😔</button>
+          <button class="mood-btn" data-mood="😰 Anxious"    data-score="2">😰</button>
+          <button class="mood-btn" data-mood="😤 Frustrated" data-score="2">😤</button>
+        </div>
+      </div>
+      <div class="message ai">
+        <div class="msg-avatar"></div>
+        <div class="msg-content">
+          <div class="msg-bubble">
+            Hi there 👋 I'm Serene, your mental health companion. This is a safe, private space — you can share anything on your mind, and I'll listen without judgment.<br><br>
+            How are you feeling today?
+          </div>
+          <div class="msg-time" id="welcomeTime"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="suggested-prompts" id="suggestedPrompts">
+      <button class="suggestion-chip">I've been feeling anxious</button>
+      <button class="suggestion-chip">Help me calm down</button>
+      <button class="suggestion-chip">I can't sleep well lately</button>
+      <button class="suggestion-chip">I need to talk</button>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chat-input-wrap">
+        <textarea id="chatInput" placeholder="Share what's on your mind..." rows="1"></textarea>
+        <div class="input-actions">
+          <button class="input-icon-btn" id="voiceBtn" title="Voice input">🎤</button>
+          <button class="send-btn" id="sendBtn">➤</button>
+        </div>
+      </div>
+      <div class="input-hint">Enter to send · Shift+Enter for new line · Your conversations are private</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="crisisModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🆘 Crisis Support</div>
+      <button class="modal-close" id="crisisModalClose">✕</button>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px;font-size:0.92rem;line-height:1.6">
+      You're not alone. If you're in immediate danger, please call emergency services.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <a href="tel:988"    class="btn btn-primary">📞 Call 988 — Suicide & Crisis Lifeline</a>
+      <a href="sms:741741" class="btn btn-secondary">💬 Text HOME to 741741</a>
+      <a href="tel:911"    class="btn btn-danger btn-sm">🚨 Emergency: 911</a>
+    </div>
+    <button class="btn btn-ghost btn-full mt-4" id="crisisModalDismiss">I'm okay, close this</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clearChatModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Clear Conversation?</div>
+      <button class="modal-close" id="clearModalClose">✕</button>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px">This will permanently delete all messages in this session.</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-danger" style="flex:1" id="confirmClearBtn">Yes, Clear All</button>
+      <button class="btn btn-ghost"  style="flex:1" id="cancelClearBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
