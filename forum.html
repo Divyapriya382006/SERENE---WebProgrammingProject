@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-page="forum">
 
 <nav class="navbar">
   <a class="navbar-brand" href="index.html">Serene</a>
@@ -27,11 +27,11 @@
 
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
     <div class="forum-filters" id="filterTabs">
-      <div class="filter-tab active" data-filter="All">All Posts</div>
-      <div class="filter-tab" data-filter="Anxiety">Anxiety</div>
-      <div class="filter-tab" data-filter="Depression">Depression</div>
-      <div class="filter-tab" data-filter="Self-care">Self-care</div>
-      <div class="filter-tab" data-filter="Wins 🎉">Wins 🎉</div>
+      <button class="filter-tab active" data-filter="All">All Posts</button>
+      <button class="filter-tab" data-filter="Anxiety">Anxiety</button>
+      <button class="filter-tab" data-filter="Depression">Depression</button>
+      <button class="filter-tab" data-filter="Self-care">Self-care</button>
+      <button class="filter-tab" data-filter="Wins 🎉">Wins 🎉</button>
     </div>
     <button class="btn btn-primary btn-sm" id="newPostBtn">+ New Post</button>
   </div>
@@ -39,7 +39,6 @@
   <div id="forumPosts"></div>
 </div>
 
-<!-- New Post modal -->
 <div class="modal-overlay" id="newPostModal">
   <div class="modal">
     <div class="modal-header">
@@ -73,6 +72,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>
