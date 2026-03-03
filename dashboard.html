@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-page="dashboard">
 
 <nav class="navbar">
   <a class="navbar-brand" href="index.html">Serene</a>
@@ -24,25 +24,25 @@
   <div class="dash-sidebar">
     <div class="dash-nav-section">
       <div class="dash-nav-label">Main</div>
-      <div class="dash-nav-item active"><span class="dash-nav-icon"></span>Overview</div>
-      <a href="chat.html"  class="dash-nav-item"><span class="dash-nav-icon"></span>Chat</a>
-      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Mood Log</div>
-      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Progress</div>
+      <div class="dash-nav-item active"><span class="dash-nav-icon">📊</span>Overview</div>
+      <a href="chat.html"  class="dash-nav-item"><span class="dash-nav-icon">💬</span>Chat</a>
+      <button class="dash-nav-item" id="moodLogBtn" style="width:100%;text-align:left;background:none;border:none;color:var(--text2);font-size:0.88rem;font-weight:500;"><span class="dash-nav-icon">😊</span>Mood Log</button>
+      <div class="dash-nav-item"><span class="dash-nav-icon">📈</span>Progress</div>
     </div>
     <div class="dash-nav-section">
       <div class="dash-nav-label">Connect</div>
       <a href="forum.html" class="dash-nav-item">
-        <span class="dash-nav-icon"></span>Community<span class="dash-badge">3</span>
+        <span class="dash-nav-icon">🌐</span>Community<span class="dash-badge">3</span>
       </a>
-      <div class="dash-nav-item"><span class="dash-nav-icon"></span>My Therapist</div>
-      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Reports</div>
+      <div class="dash-nav-item"><span class="dash-nav-icon">🩺</span>My Therapist</div>
+      <div class="dash-nav-item"><span class="dash-nav-icon">📋</span>Reports</div>
     </div>
     <div class="dash-nav-section">
       <div class="dash-nav-label">Account</div>
-      <div class="dash-nav-item"><span class="dash-nav-icon"></span>Settings</div>
-      <a href="index.html" class="dash-nav-item"><span class="dash-nav-icon"></span>Home</a>
+      <div class="dash-nav-item"><span class="dash-nav-icon">⚙️</span>Settings</div>
+      <a href="index.html" class="dash-nav-item"><span class="dash-nav-icon">🏠</span>Home</a>
       <button class="dash-nav-item" id="logoutBtn" style="width:100%;text-align:left;background:none;border:none;color:var(--text2);font-size:0.88rem;font-weight:500;">
-        <span class="dash-nav-icon"></span>Sign Out
+        <span class="dash-nav-icon">🚪</span>Sign Out
       </button>
     </div>
   </div>
@@ -56,10 +56,14 @@
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-card-label">Chat Sessions</div>
+        <!-- id added so initDashboard() can update this value -->
+        <div class="stat-card-val" id="statSessions">—</div>
         <div class="stat-card-change up">↑ 4 this week</div>
       </div>
       <div class="stat-card">
         <div class="stat-card-label">Avg Mood Score</div>
+        <!-- id added so initDashboard() can update this value -->
+        <div class="stat-card-val" id="statMood">—</div>
         <div class="stat-card-change up">↑ 0.8 vs last week</div>
       </div>
       <div class="stat-card">
@@ -111,22 +115,21 @@
       </div>
       <div style="margin-top:16px">
         <div class="session-item">
-          <div class="session-icon"></div>
+          <div class="session-icon">💬</div>
           <div class="session-info">
             <div class="session-title">Understanding my anxiety</div>
             <div class="session-meta">Today · 24 min · 18 messages</div>
           </div>
-          
         </div>
         <div class="session-item">
-          <div class="session-icon"></div>
+          <div class="session-icon">🌅</div>
           <div class="session-info">
             <div class="session-title">Morning check-in</div>
             <div class="session-meta">Yesterday · 8 min · 6 messages</div>
           </div>
         </div>
         <div class="session-item">
-          <div class="session-icon"></div>
+          <div class="session-icon">🧘</div>
           <div class="session-info">
             <div class="session-title">Coping strategies</div>
             <div class="session-meta">Mon · 35 min · 28 messages</div>
@@ -137,6 +140,40 @@
   </div>
 </div>
 
+<!-- Mood Log Modal -->
+<div class="modal-overlay" id="moodLogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">😊 Log Your Mood</div>
+      <button class="modal-close" id="moodLogModalClose">✕</button>
+    </div>
+    <p style="color:var(--text2);margin-bottom:20px;font-size:0.92rem">How are you feeling right now? This will be saved to your mood history.</p>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px" id="moodLogOptions">
+      <button class="mood-log-opt" data-mood="Great" data-score="5" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:2px solid transparent;cursor:pointer;transition:all 0.2s;color:var(--text)">
+        <span style="font-size:1.8rem">😊</span><span style="font-size:0.72rem;font-weight:600">Great</span>
+      </button>
+      <button class="mood-log-opt" data-mood="Good" data-score="4" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:2px solid transparent;cursor:pointer;transition:all 0.2s;color:var(--text)">
+        <span style="font-size:1.8rem">🙂</span><span style="font-size:0.72rem;font-weight:600">Good</span>
+      </button>
+      <button class="mood-log-opt" data-mood="Okay" data-score="3" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:2px solid transparent;cursor:pointer;transition:all 0.2s;color:var(--text)">
+        <span style="font-size:1.8rem">😐</span><span style="font-size:0.72rem;font-weight:600">Okay</span>
+      </button>
+      <button class="mood-log-opt" data-mood="Low" data-score="2" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:2px solid transparent;cursor:pointer;transition:all 0.2s;color:var(--text)">
+        <span style="font-size:1.8rem">😔</span><span style="font-size:0.72rem;font-weight:600">Low</span>
+      </button>
+      <button class="mood-log-opt" data-mood="Bad" data-score="1" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:12px;background:var(--bg2);border:2px solid transparent;cursor:pointer;transition:all 0.2s;color:var(--text)">
+        <span style="font-size:1.8rem">😞</span><span style="font-size:0.72rem;font-weight:600">Bad</span>
+      </button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Add a note (optional)</label>
+      <textarea class="form-input" id="moodLogNote" rows="3" placeholder="What's influencing your mood today?"></textarea>
+    </div>
+    <button class="btn btn-primary btn-full" id="moodLogSaveBtn" disabled>Save Mood Entry</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>
