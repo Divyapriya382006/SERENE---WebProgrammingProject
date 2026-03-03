@@ -1,29 +1,19 @@
-// ════════════════════════════════════════════════════════════
-//  app.js — Serene · Single JS file for all pages
-//  Each page's <body> has a data-page attribute that routes
-//  init logic to the right section below.
-//
-//  data-page values:
-//    "landing"   → index.html
-//    "login"     → login.html
-//    "signup"    → signup.html
-//    "chat"      → chat.html
-//    "dashboard" → dashboard.html
-//    "forum"     → forum.html
-// ════════════════════════════════════════════════════════════
-
-
-// ════════════════════════════════════════════════════════════
-//  SECTION 1 — CONFIG & SUPABASE CLIENT
-// ════════════════════════════════════════════════════════════
-
 const SUPABASE_URL      = 'https://uyvmclqixjlqdyhfltfi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dm1jbHFpeGpscWR5aGZsdGZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mzg1NzIsImV4cCI6MjA4NzQxNDU3Mn0.1FFjFn5usdsekYIkBGIO9ZfSymLhcu9sXRTu5HnVBHM'; // ← Supabase Dashboard → Project Settings → API → anon/public
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV5dm1jbHFpeGpscWR5aGZsdGZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mzg1NzIsImV4cCI6MjA4NzQxNDU3Mn0.1FFjFn5usdsekYIkBGIO9ZfSymLhcu9sXRTu5HnVBHM';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!window.supabase) {
+  console.error('[Serene] Supabase CDN not loaded! Make sure the supabase-js <script> tag appears BEFORE script.js in your HTML.');
+}
 
-const API_BASE          = 'http://localhost:8000';
-const API               = {
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+const API_BASE            = 'http://localhost:8000';
+const API                 = {
   chat:      `${API_BASE}/chat`,
   sentiment: `${API_BASE}/sentiment`,
   mood:      `${API_BASE}/mood`,
@@ -31,12 +21,6 @@ const API               = {
 };
 const SENTIMENT_THRESHOLD = -0.75;
 
-
-// ════════════════════════════════════════════════════════════
-//  SECTION 2 — SHARED UTILITIES (available on every page)
-// ════════════════════════════════════════════════════════════
-
-// ─── Theme ────────────────────────────────────────────────
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   document.querySelectorAll('.theme-toggle').forEach(b => {
@@ -48,10 +32,8 @@ function toggleTheme() {
   localStorage.setItem('theme', next);
   applyTheme(next);
 }
-// Apply saved theme immediately (runs before DOMContentLoaded)
 applyTheme(localStorage.getItem('theme') || 'dark');
 
-// ─── Toast ────────────────────────────────────────────────
 function showToast(msg, type = 'info') {
   let container = document.getElementById('toastContainer');
   if (!container) {
@@ -72,11 +54,9 @@ function showToast(msg, type = 'info') {
   }, 3500);
 }
 
-// ─── Modal ────────────────────────────────────────────────
 function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
 function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
 
-// ─── Auth helpers ─────────────────────────────────────────
 async function requireAuth() {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) { window.location.href = 'login.html'; return null; }
@@ -113,7 +93,6 @@ function togglePassword(id, btn) {
   btn.textContent = hidden ? '🙈' : '👁';
 }
 
-// ─── Supabase DB helpers ──────────────────────────────────
 async function saveMoodEntry(userId, moodLabel, moodScore) {
   const { error } = await supabase.from('mood_entries').insert({
     user_id: userId, mood_label: moodLabel,
@@ -152,7 +131,6 @@ async function fetchChatSessions(userId) {
   return data || [];
 }
 
-// ─── General utils ────────────────────────────────────────
 function escapeHtml(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
@@ -165,13 +143,7 @@ function autoResize(el) {
 }
 
 
-// ════════════════════════════════════════════════════════════
-//  SECTION 3 — PAGE ROUTER
-//  Reads data-page from <body> and calls the right init fn
-// ════════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
-  // Close modals on backdrop click
   document.addEventListener('click', e => {
     if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
   });
@@ -194,10 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// ════════════════════════════════════════════════════════════
-//  SECTION 4 — LANDING PAGE  (index.html)
-// ════════════════════════════════════════════════════════════
-
 async function initLanding() {
   const user = await getUser();
   if (user) {
@@ -210,12 +178,7 @@ async function initLanding() {
 }
 
 
-// ════════════════════════════════════════════════════════════
-//  SECTION 5 — LOGIN PAGE  (login.html)
-// ════════════════════════════════════════════════════════════
-
 async function initLogin() {
-  // Already logged in → skip to chat
   const user = await getUser();
   if (user) { window.location.href = 'chat.html'; return; }
 
@@ -248,12 +211,7 @@ async function initLogin() {
 }
 
 
-// ════════════════════════════════════════════════════════════
-//  SECTION 6 — SIGNUP PAGE  (signup.html)
-// ════════════════════════════════════════════════════════════
-
 async function initSignup() {
-  // Already logged in → skip to chat
   const user = await getUser();
   if (user) { window.location.href = 'chat.html'; return; }
 
@@ -294,12 +252,6 @@ async function initSignup() {
   });
 }
 
-
-// ════════════════════════════════════════════════════════════
-//  SECTION 7 — CHAT PAGE  (chat.html)
-// ════════════════════════════════════════════════════════════
-
-// Chat state — scoped to this section
 let _currentUser      = null;
 let _messages         = [];
 let _isSending        = false;
@@ -312,7 +264,6 @@ async function initChat() {
 
   _currentUser = session.user;
 
-  // Populate UI with user info
   const name    = getDisplayName(_currentUser);
   const initial = getInitial(_currentUser);
   document.getElementById('navAvatar').textContent     = initial;
@@ -325,7 +276,6 @@ async function initChat() {
   setupAccessibilityPanel();
 }
 
-// ─── API call ─────────────────────────────────────────────
 async function callChatAPI(message) {
   // ── WIRE YOUR FASTAPI HERE ──────────────────────────────
   // const res = await fetch(API.chat, {
@@ -343,7 +293,6 @@ async function callChatAPI(message) {
   // updateSentimentBar(data.sentiment_score);
   // return data.response;
 
-  // Stub responses for UI testing
   await new Promise(r => setTimeout(r, 1000 + Math.random() * 800));
   const stubs = [
     "I hear you. It takes courage to share how you're feeling. Can you tell me more about when this started?",
@@ -354,7 +303,6 @@ async function callChatAPI(message) {
   return stubs[Math.floor(Math.random() * stubs.length)];
 }
 
-// ─── Send message ─────────────────────────────────────────
 async function sendMessage() {
   const input = document.getElementById('chatInput');
   const text  = input.value.trim();
@@ -385,7 +333,6 @@ async function sendMessage() {
   }
 }
 
-// ─── Chat UI helpers ──────────────────────────────────────
 function appendMessage(role, text) {
   const container = document.getElementById('chatMessages');
   const el        = document.createElement('div');
@@ -460,7 +407,6 @@ function updateSentimentBar(score) {
   fill.style.background = score > 0.5 ? 'var(--accent3)' : score > 0 ? 'var(--accent)' : 'var(--danger)';
 }
 
-// ─── Chat history sidebar ──────────────────────────────────
 async function loadChatHistory() {
   if (!_currentUser) return;
   const sessions = await fetchChatSessions(_currentUser.id);
@@ -479,7 +425,6 @@ function loadSession(id) {
   showToast('Session loading — wire Supabase fetch here', 'info');
 }
 
-// ─── TTS ──────────────────────────────────────────────────
 function toggleTTS() {
   _ttsEnabled = !_ttsEnabled;
   document.getElementById('ttsBtn')?.classList.toggle('active', _ttsEnabled);
@@ -493,7 +438,6 @@ function speakText(text) {
   window.speechSynthesis.speak(u);
 }
 
-// ─── Voice input ──────────────────────────────────────────
 function startVoiceInput() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { showToast('Voice input not supported in this browser', 'error'); return; }
@@ -508,17 +452,14 @@ function startVoiceInput() {
   showToast('Listening... 🎤', 'info');
 }
 
-// ─── All event listeners for chat page ────────────────────
 function setupChatListeners() {
   const input = document.getElementById('chatInput');
 
-  // Input box
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
   input.addEventListener('input', () => autoResize(input));
 
-  // Toolbar buttons
   document.getElementById('sendBtn')?.addEventListener('click', sendMessage);
   document.getElementById('ttsBtn')?.addEventListener('click', toggleTTS);
   document.getElementById('newChatBtn')?.addEventListener('click', newChat);
@@ -527,22 +468,18 @@ function setupChatListeners() {
   document.getElementById('voiceBtn')?.addEventListener('click', startVoiceInput);
   document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
 
-  // Crisis modal
   document.getElementById('crisisFab')?.addEventListener('click', () => openModal('crisisModal'));
   document.getElementById('crisisModalClose')?.addEventListener('click', () => closeModal('crisisModal'));
   document.getElementById('crisisModalDismiss')?.addEventListener('click', () => closeModal('crisisModal'));
 
-  // Clear chat modal
   document.getElementById('confirmClearBtn')?.addEventListener('click', confirmClearChat);
   document.getElementById('cancelClearBtn')?.addEventListener('click', () => closeModal('clearChatModal'));
   document.getElementById('clearModalClose')?.addEventListener('click', () => closeModal('clearChatModal'));
 
-  // Mood buttons — uses data-mood and data-score attributes on the button
   document.querySelectorAll('.mood-btn').forEach(btn => {
     btn.addEventListener('click', () => selectMood(btn.dataset.mood, parseInt(btn.dataset.score)));
   });
 
-  // Suggestion chips
   document.querySelectorAll('.suggestion-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       input.value = chip.textContent;
@@ -551,7 +488,6 @@ function setupChatListeners() {
   });
 }
 
-// ─── Accessibility panel ──────────────────────────────────
 function setupAccessibilityPanel() {
   document.getElementById('a11yToggle')?.addEventListener('click', () => {
     document.getElementById('a11yBar')?.classList.toggle('open');
@@ -572,11 +508,6 @@ function setupAccessibilityPanel() {
   });
 }
 
-
-// ════════════════════════════════════════════════════════════
-//  SECTION 8 — DASHBOARD PAGE  (dashboard.html)
-// ════════════════════════════════════════════════════════════
-
 async function initDashboard() {
   const session = await requireAuth();
   if (!session) return;
@@ -592,13 +523,49 @@ async function initDashboard() {
 
   document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
 
-  // Fetch real data from Supabase in parallel
+  document.getElementById('moodLogBtn')?.addEventListener('click', () => openModal('moodLogModal'));
+  document.getElementById('moodLogModalClose')?.addEventListener('click', () => closeModal('moodLogModal'));
+
+  let _selectedMoodScore = null;
+  let _selectedMoodLabel = null;
+
+  document.querySelectorAll('.mood-log-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Deselect all, select clicked
+      document.querySelectorAll('.mood-log-opt').forEach(b => {
+        b.style.borderColor = 'transparent';
+        b.style.background  = 'var(--bg2)';
+      });
+      btn.style.borderColor = 'var(--accent)';
+      btn.style.background  = 'rgba(94,183,255,0.1)';
+      _selectedMoodScore = parseInt(btn.dataset.score);
+      _selectedMoodLabel = btn.dataset.mood;
+      document.getElementById('moodLogSaveBtn').disabled = false;
+    });
+  });
+
+  document.getElementById('moodLogSaveBtn')?.addEventListener('click', async () => {
+    if (!_selectedMoodScore) return;
+    await saveMoodEntry(user.id, _selectedMoodLabel, _selectedMoodScore);
+    showToast(`Mood logged: ${_selectedMoodLabel} 😊`, 'success');
+    closeModal('moodLogModal');
+    // Reset UI
+    document.querySelectorAll('.mood-log-opt').forEach(b => {
+      b.style.borderColor = 'transparent';
+      b.style.background  = 'var(--bg2)';
+    });
+    document.getElementById('moodLogNote').value = '';
+    document.getElementById('moodLogSaveBtn').disabled = true;
+    _selectedMoodScore = null;
+    _selectedMoodLabel = null;
+  });
+
   const [sessions, moods] = await Promise.all([
     fetchChatSessions(user.id),
     fetchMoodHistory(user.id, 30),
   ]);
 
-  // Stats
+  // These IDs now exist in the fixed dashboard.html
   document.getElementById('statSessions').textContent = sessions.length || '0';
   if (moods.length) {
     const avg = (moods.reduce((s, m) => s + m.mood_score, 0) / moods.length).toFixed(1);
@@ -615,17 +582,15 @@ function buildHeatmap(moods = []) {
   const grid = document.getElementById('heatmapGrid');
   if (!grid) return;
 
-  // Index real data by day of month
   const moodByDay = {};
   moods.forEach(m => { moodByDay[new Date(m.created_at).getDate()] = m.mood_score; });
 
-  // Fallback sample data for days without Supabase data
   const sample = [0,0,3,4,5,3,2,4,5,5,4,3,2,1,4,5,3,4,4,5,3,2,4,5,5,3,4,5];
 
   for (let i = 0; i < 28; i++) {
-    const cell  = document.createElement('div');
+    const cell     = document.createElement('div');
     cell.className = 'heatmap-cell';
-    const score = moodByDay[i + 1] || sample[i];
+    const score    = moodByDay[i + 1] || sample[i];
     if (score) cell.setAttribute('data-mood', score);
     cell.title = `Feb ${i + 1}${score ? ` · Mood: ${score}/5` : ''}`;
     grid.appendChild(cell);
@@ -644,7 +609,7 @@ function buildCharts() {
     if (!el) return;
     const max = Math.max(...data);
     data.forEach((v, i) => {
-      const bar = document.createElement('div');
+      const bar            = document.createElement('div');
       bar.className        = 'chart-bar';
       bar.style.height     = `${(v / max) * 85}%`;
       bar.style.background = `linear-gradient(180deg, ${c1}, ${c2})`;
@@ -656,7 +621,7 @@ function buildCharts() {
 
 
 // ════════════════════════════════════════════════════════════
-//  SECTION 9 — FORUM PAGE  (forum.html)
+//  SECTION 9 — FORUM PAGE
 // ════════════════════════════════════════════════════════════
 
 let _forumUser    = null;
@@ -697,13 +662,11 @@ async function initForum() {
 
   renderPosts();
 
-  // New post form
   document.getElementById('newPostForm')?.addEventListener('submit', submitPost);
   document.getElementById('newPostBtn')?.addEventListener('click', () => openModal('newPostModal'));
   document.getElementById('newPostModalClose')?.addEventListener('click', () => closeModal('newPostModal'));
   document.getElementById('cancelPostBtn')?.addEventListener('click', () => closeModal('newPostModal'));
 
-  // Filter tabs — each tab needs data-filter attribute in HTML
   document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => filterPosts(tab.dataset.filter));
   });
@@ -722,7 +685,7 @@ function renderPosts() {
     ? _posts
     : _posts.filter(p => p.flair === _activeFilter);
 
-  document.getElementById('forumPosts').innerHTML = filtered.map((post, i) => `
+  document.getElementById('forumPosts').innerHTML = filtered.map(post => `
     <div class="forum-post">
       <div class="post-header">
         <div class="post-avatar">${post.author[0]}</div>
@@ -735,25 +698,29 @@ function renderPosts() {
       <div class="post-title">${post.title}</div>
       <div class="post-body">${post.body}</div>
       <div class="post-actions">
-        <button class="post-action-btn" data-idx="${i}" data-action="upvote">▲ ${post.upvotes}</button>
-        <button class="post-action-btn">💬 ${post.comments} replies</button>
+        <!-- FIX: use post.id instead of array index to avoid stale-index bug when filtered -->
+        <button class="post-action-btn" data-post-id="${post.id}" data-action="upvote">▲ ${post.upvotes}</button>
+        <button class="post-action-btn">${post.comments} replies</button>
         <button class="post-action-btn">🔗 Share</button>
         <button class="post-action-btn" style="margin-left:auto">⚑ Report</button>
       </div>
     </div>`).join('');
 
-  // Attach upvote listeners after render
+  // Attach upvote listeners after render — look up by post ID, not array index
   document.querySelectorAll('[data-action="upvote"]').forEach(btn => {
-    btn.addEventListener('click', () => upvotePost(btn, parseInt(btn.dataset.idx)));
+    btn.addEventListener('click', () => upvotePost(btn, parseInt(btn.dataset.postId)));
   });
 }
 
-function upvotePost(btn, idx) {
-  _posts[idx].upvotes++;
-  btn.textContent = `▲ ${_posts[idx].upvotes}`;
+// FIX: find post by its unique id instead of using a rendered array index
+function upvotePost(btn, postId) {
+  const post = _posts.find(p => p.id === postId);
+  if (!post) return;
+  post.upvotes++;
+  btn.textContent = `▲ ${post.upvotes}`;
   btn.style.color = 'var(--accent)';
   // ── WIRE SUPABASE HERE ───────────────────────────────────
-  // supabase.from('forum_posts').update({ upvotes: _posts[idx].upvotes }).eq('id', _posts[idx].id);
+  // supabase.from('forum_posts').update({ upvotes: post.upvotes }).eq('id', post.id);
 }
 
 async function submitPost(e) {
@@ -768,6 +735,7 @@ async function submitPost(e) {
   // }).select().single();
   // if (error) { showToast(error.message, 'error'); return; }
 
+  // Use a timestamp-based id to keep the id-lookup approach consistent
   _posts.unshift({ id: Date.now(), author: 'You', time: 'Just now', flair, title, body, upvotes: 1, comments: 0 });
   renderPosts();
   closeModal('newPostModal');
