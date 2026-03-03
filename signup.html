@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-page="signup">
 
 <nav class="navbar">
   <a class="navbar-brand" href="index.html">Serene</a>
@@ -29,7 +29,6 @@
       <h2>Create your account</h2>
       <p>Free forever for core features</p>
 
-    
       <form id="signupForm">
         <div class="form-row">
           <div class="form-group">
@@ -52,7 +51,7 @@
             <button type="button" class="password-toggle" id="passwordToggle">👁</button>
           </div>
         </div>
-        
+
         <button type="submit" class="btn btn-primary btn-full" id="signupBtn">Create Account ✦</button>
       </form>
 
@@ -64,6 +63,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
 </body>
 </html>
